@@ -16,7 +16,7 @@ public class SpacecountDataFetcher {
 
 	@Value("${spacecount.url}")
 	String url;
-		
+
 	public Root getRoot() {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Root root = null;
