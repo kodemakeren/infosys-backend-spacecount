@@ -1,11 +1,14 @@
 package no.infossys.spacecount;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.infossys.spacecount.db.Astronaut;
 import no.infossys.spacecount.db.Spacecraft;
+import no.infossys.spacecount.exception.MalformedAstroUrlException;
 import no.infossys.spacecount.json.Person;
 import no.infossys.spacecount.json.Root;
 import no.infossys.spacecount.repository.SpacecraftRepository;
@@ -35,7 +39,11 @@ public class SpacecountInitialization {
 		
 		Map<String, Spacecraft> spacecrafts = createSpacecraftsWithAstronauts(root.getPeople());
 		
-		spacecraftRepository.saveAll(spacecrafts.values());
+		saveSpacecrafts(spacecrafts.values());
+	}
+	
+	public void setSpacecountJson(String json) {
+		
 	}
 	
 	public Root getRoot() {
@@ -44,12 +52,12 @@ public class SpacecountInitialization {
 			URL spacecountUrl = URI.create(url).toURL();
 			return objectMapper.readValue(spacecountUrl, Root.class);
 		} catch (IOException e) {
-			throw new RuntimeException("Fant ikke astronautdata på URL: " + url);
+			throw new MalformedAstroUrlException("Fant ikke astronautdata på URL: " + url);
 		}
 	}
 	
-	private Map<String, Spacecraft> createSpacecraftsWithAstronauts(ArrayList<Person> people) {
-		Set<Person> uniqueCrafts = new HashSet<>(people);
+	public Map<String, Spacecraft> createSpacecraftsWithAstronauts(ArrayList<Person> people) {
+		Set<Person> uniqueCrafts = getUniqueSpacecrafts(people);
 		
 		Map<String, Spacecraft> spacecrafts = new HashMap<>();
 		
@@ -77,5 +85,22 @@ public class SpacecountInitialization {
 			}
 		}
 		return spacecrafts;
+	}
+
+	public Set<Person> getUniqueSpacecrafts(ArrayList<Person> people) {
+		Set<Person> uniqueCrafts = new HashSet<>(people);
+		return uniqueCrafts;
+	}
+	
+	public void saveSpacecrafts(Collection<Spacecraft> spacecrafts) {
+		spacecraftRepository.saveAll(spacecrafts);
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 }
