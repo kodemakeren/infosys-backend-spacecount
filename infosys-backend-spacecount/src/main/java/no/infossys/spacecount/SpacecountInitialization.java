@@ -33,7 +33,9 @@ public class SpacecountInitialization {
 	
 	@Value("${spacecount.url}")
 	String url;
-
+	/**
+	 * Initialize 
+	 */
 	public void init() {
 		Root root = getRoot();
 		
