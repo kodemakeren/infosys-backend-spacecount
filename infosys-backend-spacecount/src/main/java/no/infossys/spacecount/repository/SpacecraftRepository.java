@@ -7,4 +7,5 @@ import no.infossys.spacecount.db.Spacecraft;
 public interface SpacecraftRepository extends CrudRepository<Spacecraft, Long> {
 
 	Spacecraft findByName(String name);
+	
 }
